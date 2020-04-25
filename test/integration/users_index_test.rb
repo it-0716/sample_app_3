@@ -7,15 +7,17 @@ class UsersIndexTest < ActionDispatch::IntegrationTest
     @non_admin = users(:archer)
   end
 
-  test "index including pagination" do
+  test "index including pagination and checking not-activated user" do
     log_in_as(@admin)
     get users_path
     assert_template 'users/index'
     assert_select 'div.pagination'
     User.paginate(page: 1).each do |user|
       assert_select 'a[href=?]', user_path(user), text: user.name
+      assert user.activated?
     end
   end
+
   # test "the truth" do
   #   assert true
   # end
